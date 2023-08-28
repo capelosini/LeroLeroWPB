@@ -66,6 +66,6 @@ for i in range(startPage, endPage):
     print("Learning progress: "+p, end="\r")
     learnPageWords(readPage(i, pdfReader))
 
-print("\nModel learned!\n\n Total model vocabulary: "+str(modelObj.model["vocab"]))
+print("\nModel trained!\n\n Total model vocabulary: "+str(modelObj.model["vocab"]))
 
 modelObj.save()
