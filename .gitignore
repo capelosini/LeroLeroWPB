@@ -1,3 +1,5 @@
 *.pdf
+!requirements.txt
+*.txt
 model
 __pycache__/*

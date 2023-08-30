@@ -8,5 +8,3 @@ An algorithm that can read PDFs and transform all the read words in a model file
 
 ### TODO LIST✔️
 - Conclusion of generated phrase
-- Randomize the second word if prompt has less than two words
-- getWord function if gets an empty string return a random word to generate above it

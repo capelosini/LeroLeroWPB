@@ -6,15 +6,24 @@ class API:
         self.modelObj=Model.Model(modelName)
     
     def getWord(self, text):
-        contextKey=85
+        contextKey=80
 
         text=text.strip()
+        if text == "": return random.choice(list(dict.keys(self.modelObj.model["data"])))
+
         currentWord=text.split(" ")[-1]
         nextWords=self.modelObj.model["data"][currentWord.lower()]
         nextWords=sorted(nextWords, key=lambda k: k["freq"], reverse=True)
         text=text[0].upper()+text[1:]
-        if len(text.split(" ")) >= 2: nextWord=random.choice(list(filter(lambda x: x["score"]>=contextKey, self.getBestContext(text.split(" ")[-2], nextWords))))["nextWord"]
-        else: nextWord=nextWords[0]["nextWord"]
+        if len(text.split(" ")) >= 2: 
+            bestContexts=self.getBestContext(text.split(" ")[-2], nextWords)
+            try:
+                # Choose the next word with score higher than contextKey
+                nextWord=random.choice(list(filter(lambda x: x["score"]>=contextKey, bestContexts)))["nextWord"]
+            except:
+                nextWord=bestContexts[0]["nextWord"]
+        
+        else: nextWord=random.choice(nextWords)["nextWord"]
         if text[-1] in [".", "!", "?"]: nextWord=nextWord.capitalize()
         return text+" "+nextWord
 
@@ -52,9 +61,10 @@ class API:
         return sorted(l, key=lambda k: k["sim"], reverse=True)
 
     def generate(self, prompt, size):
-        prompt=prompt.split(" ")
-        prompt[-1]=self.searchWord(prompt[-1])[0]["word"]
-        prompt=" ".join(prompt)
+        if prompt.strip() != "":
+            prompt=prompt.split(" ")
+            prompt[-1]=self.searchWord(prompt[-1])[0]["word"]
+            prompt=" ".join(prompt)
         for i in range(size):
             prompt=self.getWord(prompt)
         return prompt
