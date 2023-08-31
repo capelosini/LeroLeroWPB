@@ -5,8 +5,8 @@ class API:
     def __init__(self, modelName="model"):
         self.modelObj=Model.Model(modelName)
     
-    def getWord(self, text):
-        contextKey=80
+    def getWord(self, text, end=False):
+        contextKey=90
 
         text=text.strip()
         if text == "": return random.choice(list(dict.keys(self.modelObj.model["data"])))
@@ -15,14 +15,16 @@ class API:
         nextWords=self.modelObj.model["data"][currentWord.lower()]
         nextWords=sorted(nextWords, key=lambda k: k["freq"], reverse=True)
         text=text[0].upper()+text[1:]
-        if len(text.split(" ")) >= 2: 
+        if len(text.split(" ")) >= 2:
             bestContexts=self.getBestContext(text.split(" ")[-2], nextWords)
             try:
                 # Choose the next word with score higher than contextKey
                 nextWord=random.choice(list(filter(lambda x: x["score"]>=contextKey, bestContexts)))["nextWord"]
             except:
                 nextWord=bestContexts[0]["nextWord"]
-        
+            if end and nextWord[-1] not in [".", "!", "?"]: 
+                for i in bestContexts:
+                    if i["nextWord"][-1] in [".", "!", "?"]: nextWord=i["nextWord"]
         else: nextWord=random.choice(nextWords)["nextWord"]
         if text[-1] in [".", "!", "?"]: nextWord=nextWord.capitalize()
         return text+" "+nextWord
@@ -61,10 +63,17 @@ class API:
         return sorted(l, key=lambda k: k["sim"], reverse=True)
 
     def generate(self, prompt, size):
+        size-=len(prompt.split(" "))
         if prompt.strip() != "":
             prompt=prompt.split(" ")
-            prompt[-1]=self.searchWord(prompt[-1])[0]["word"]
+            for i in range(len(prompt)):
+                prompt[i]=self.searchWord(prompt[i])[0]["word"]
             prompt=" ".join(prompt)
-        for i in range(size):
-            prompt=self.getWord(prompt)
+        
+        end=False
+        while True:
+            if size == 0: end=True
+            prompt=self.getWord(prompt, end=end)
+            size-=1
+            if prompt[-1] in [".", "!", "?"] and end: break
         return prompt

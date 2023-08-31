@@ -6,5 +6,3 @@ An algorithm that can read PDFs and txt files to transform all the read words in
 
 <hr>
 
-### TODO LIST✔️
-- Conclusion of generated phrase
