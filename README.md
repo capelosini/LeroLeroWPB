@@ -6,3 +6,7 @@ An algorithm that can read PDFs and txt files to transform all the read words in
 
 <hr>
 
+### Example (LOTR_PTBR_model)
+```Prompt: Clear```
+
+```Output: Clear we see your silver blossom blown! O elbereth! Clear water!```
