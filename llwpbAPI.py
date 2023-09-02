@@ -6,7 +6,7 @@ class API:
         self.modelObj=Model.Model(modelName)
     
     def getWord(self, text, end=False):
-        contextKey=90
+        contextKey=80
 
         text=text.strip()
         if text == "": return random.choice(list(dict.keys(self.modelObj.model["data"])))
